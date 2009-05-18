@@ -21,26 +21,38 @@
 #ifndef _KHTML2PNG_H_
 #define _KHTML2PNG_H_
 
-class KHTMLPart;
+class myKHTMLPart : public KHTMLPart {
+	virtual void showError( KIO::Job* job );
+//	friend class KHTML2PNG;
+};
 
 class KHTML2PNG : public QObject
 {
     Q_OBJECT
 public:
-    KHTML2PNG();
-    ~KHTML2PNG();
+    KHTML2PNG(int jscript, int java, int plugin, int refresh, int localonly);
+    virtual ~KHTML2PNG() {delete m_html;}
     QImage* create(const QString &path, int width, int height, int time, int flashDelay);
+	void processBatch(const QString &fileName, const QString &path, int width, int height, int time, int flashDelay, int scaledWidth, int scaledHeight);
+	QString lastModified();
+	bool haveFlash();
 
 protected:
     virtual void timerEvent(QTimerEvent *);
+	void showTree(const DOM::Node &pNode);
+	void showRecursive(const DOM::Node &node);
+
 
 private slots:
     void slotCompleted();
 
+	
 private:
-    KHTMLPart *m_html;
-    bool m_completed;
-    bool m_flashStarted;
+	myKHTMLPart *m_html;
+	bool flashflag;
+	bool m_completed;
+	bool m_flashStarted;
 };
+
 
 #endif

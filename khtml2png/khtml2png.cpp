@@ -1,6 +1,7 @@
 /*  Render HTML page, write out as PNG
     Heavily based on KDE HTML thumbnail creator
     Copyright (C) 2003 Simon MacMullen
+    Copyright (C) 2004 Miroslav Suchy
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -31,70 +32,84 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kaboutdata.h>
+#include <iostream>
+#include <string.h>
+#include <dom/dom_core.h>
+#include <dom/html_base.h>
+#include <dom/dom_string.h>
+#include <kio/job.h>
+
 
 #include "khtml2png.h"
 
-KHTML2PNG::KHTML2PNG()
-    : m_html(0)
-{
+void myKHTMLPart::showError( KIO::Job* job ) {
+   if (job->error() == KIO::ERR_NO_CONTENT)
+     return;
+   htmlError( job->error(), job->errorText(), "" );
 }
 
-KHTML2PNG::~KHTML2PNG()
-{
-    delete m_html;
-}
-
-QImage* KHTML2PNG::create(const QString &path, int width, int height, int time, int flashDelay)
-{
-    if (!m_html)
-    {
-        m_html = new KHTMLPart;
+KHTML2PNG::KHTML2PNG(int jscript, int java, int plugin, int refresh, int localonly)
+    : m_html(0) {
+	m_html = new myKHTMLPart;
         connect(m_html, SIGNAL(completed()), SLOT(slotCompleted()));
         m_html->setJScriptEnabled(true);
         m_html->setJavaEnabled(true);
         m_html->setPluginsEnabled(true);
         m_html->setMetaRefreshEnabled(true);
         m_html->setOnlyLocalReferences(false);
-    }
+}
+
+QImage* KHTML2PNG::create(const QString &path, int width, int height, int time, int flashDelay) {
     m_html->openURL(path);
     m_html->view()->resize(width, height);
 
-	if (flashDelay != -1) {
-		// Grab using X - requires window to be visible.
-		m_html->view()->show();
-	}
-
     m_completed = false;
     startTimer(time * 1000);
-    while (!m_completed)
-        kapp->processOneEvent();
-    killTimers();
-
+    while (!m_completed) {
+		usleep(1);
+        	kapp->processEvents();
+	}
+	killTimers();
+	flashflag = false;
+   	showTree(m_html->document());
     // Do a screengrab type thing - we get form widgets that way
 
-    QPixmap pix;
-    if (flashDelay == -1) {
-        // Grab using Qt - doesn't work if window contains non-qt widgets
-        pix = QPixmap::grabWidget(m_html->view()->clipper());
-    } else {
-        // Wait for the flash movie to play
-        m_flashStarted = false;
-        startTimer(flashDelay * 1000);
-        while (!m_flashStarted)
-            kapp->processOneEvent();
-        killTimers();
+	QPixmap pix;
+	if ((flashDelay > 0) || (flashflag)) { // Grab using X - requires window to be visible.
+		m_html->view()->show();
+		// Wait for the flash movie to play
+	        m_flashStarted = false;
+        	startTimer(flashDelay > 0 ? flashDelay * 1000 : 3000);
+        	while (!m_flashStarted) {
+			usleep(1);
+        		kapp->processEvents();
+		}
+        	killTimers();
+	        pix = QPixmap::grabWindow(m_html->view()->clipper()->winId());
+	} else {
+		m_html->view()->hide();
+		// Grab using Qt - doesn't work if window contains non-qt widgets
+        	pix = QPixmap::grabWidget(m_html->view()->clipper());
+	}
 
-        pix = QPixmap::grabWindow(m_html->view()->clipper()->winId());
-    }
+    QImage *image = new QImage(pix.convertToImage());
+    // do not spend time with active items, render blank page and wait for others
+    m_html->closeURL();
 
-    return new QImage(pix.convertToImage());
+    return image;
 }
 
-void KHTML2PNG::timerEvent(QTimerEvent *)
-{
+QString KHTML2PNG::lastModified() {
+	return m_html->lastModified();
+}
+
+bool KHTML2PNG::haveFlash() {
+	return flashflag;
+}
+
+void KHTML2PNG::timerEvent(QTimerEvent *) {
     if (!m_completed) {
-        m_html->closeURL();
-        m_completed = true;
+         m_completed = true;
     } else {
         m_flashStarted = true;
     }
@@ -103,29 +118,93 @@ void KHTML2PNG::timerEvent(QTimerEvent *)
 void KHTML2PNG::slotCompleted()
 {
     m_completed = true;
+	printf("completed()\n");
 }
 
-static KCmdLineOptions options[] =
-{
+void KHTML2PNG::showTree(const DOM::Node &pNode) {
+  DOM::Node child;
+
+  if (!pNode.isNull()) { //page is not loaded, probably due to transfer error
+  try {
+    child = pNode.firstChild();
+  }
+  catch (DOM::DOMException &)   {
+    return;
+  }
+
+  while(!child.isNull() && !flashflag) {
+    showRecursive(child);
+    child = child.nextSibling();
+  }
+  }
+}
+
+void KHTML2PNG::showRecursive(const DOM::Node &node) {
+  if(node.nodeName().string() == QString::fromLatin1("OBJECT")) {
+    flashflag = true; // detected
+    return;
+  }
+  DOM::Node child = node.lastChild();
+  if (child.isNull()) {
+    DOM::HTMLFrameElement frame = node;
+    if(!frame.isNull()) 
+	child = frame.contentDocument().documentElement();
+  }
+  while(!child.isNull() && !flashflag) {
+    showRecursive(child);
+    child = child.previousSibling();
+  }
+}
+
+static KCmdLineOptions options[] = {
 	{ "width ", "Width of canvas on which to render html", "800" },
 	{ "height ", "Height of canvas on which to render html", "1000" },
 	{ "scaled-width ", "Width of image to produce", "80" },
 	{ "scaled-height ", "Height of image to produce", "100" },
-	{ "flash-delay ", "Pause after loading page to allow flash movie to fade up", "3" },
-    { "time ", "Maximum time in seconds to spend loading page", "30" },
+	{ "flash-delay ", "Pause after loading page to allow flash movie to fade up (-1 mean no flash)", "3" },
+	{ "time ", "Maximum time in seconds to spend loading page", "30" },
+	{ "nojscript", "Disable JavaScript", 0},
+	{ "nojava", "Disable Java", 0},
+	{ "noplugin", "Disable plugins", 0 },
+	{ "norefresh", "Disable meta refresh", 0 },
+	{ "localonly", "Disable local references", 0},
 	{ "+url ", "URL of page to render", 0 },
 	{ "+outfile ", "Output file", 0 },
 	{ 0, 0, 0 }
 };
 
-int main(int argc, char **argv)
-{
+void KHTML2PNG::processBatch(const QString &fileName, const QString &path, int width, int height, int time, int flashDelay, int scaledWidth, int scaledHeight) {
+	QImage* renderedImage = this->create(path, width, height, time, flashDelay);
+
+	if (renderedImage->width() < scaledWidth || renderedImage->height() < scaledHeight) {
+		// We got a slightly smaller image than we asked for (scrollbars)
+		// don't blow it up by a few % (looks blurry)
+		if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg")) {
+			renderedImage->save(fileName, "JPEG");
+		} else {
+			renderedImage->save(fileName, "PNG");
+		}
+
+	} else {
+		QImage scaledImage = renderedImage->smoothScale(scaledWidth, scaledHeight);
+
+		if (fileName.endsWith(".jpeg") || fileName.endsWith(".jpg")) {
+			scaledImage.save(fileName, "JPEG");
+		} else {
+			scaledImage.save(fileName, "PNG");
+		}
+	}
+	delete renderedImage;
+}
+
+int main(int argc, char **argv) {
 	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"),
-		"1.0.2",
-		I18N_NOOP("Render HTML to a PNG from the command line\nExample: khtml2png --width 800 --height 1000 --scaled-width 800 --scaled-height 1000 http://www.kde.org/ kde-org.png"),
+		"1.0.3",
+		I18N_NOOP("Render HTML to a PNG from the command line\nExample: khtml2png --width 800 --height 1000 --scaled-width 800 --scaled-height 1000 http://www.kde.org/ kde-org.png\nor khtml2png --width 800 --height 1000 - and write url on first line of stdin and on second 'filename scaledwidth scaledheight flash'"),
 		KAboutData::License_GPL,
 		"(c) 2003 Simon MacMullen.");
 	aboutData.addAuthor("Simon MacMullen", 0, "s.macmullen@ry.com");
+	aboutData.addAuthor("Miroslav Suchy", 0, "miroslav@suchy.cz");
 	KCmdLineArgs::init(argc, argv, &aboutData);
 	KCmdLineArgs::addCmdLineOptions(options);
 	KCmdLineArgs *args=KCmdLineArgs::parsedArgs();
@@ -144,36 +223,30 @@ int main(int argc, char **argv)
 
 	KInstance inst(&aboutData);
 	KApplication app;
-
+	char Input [2000];
+	char ids [2000] = "-";
 	if (args->count() != 2) {
-	    args->usage();
-	}
-
-	KHTML2PNG* convertor = new KHTML2PNG();
-	QImage* renderedImage = convertor->create(QString(args->arg(0)), width, height, time, flashDelay);
-
-	QString filename = QString(args->arg(1));
-
-	if (renderedImage->width() < scaledWidth || renderedImage->height() < scaledHeight) {
-		// We got a slightly smaller image than we asked for (scrollbars)
-		// don't blow it up by a few % (looks blurry)
-		if (filename.endsWith(".jpeg") || filename.endsWith(".jpg")) {
-			renderedImage->save(args->arg(1), "JPEG");
-		} else {
-			renderedImage->save(args->arg(1), "PNG");
+		if (args->count() == 0 || strcmp(args->arg(0),ids)!=0)  {
+		    args->usage();
 		}
-
+	}
+	KHTML2PNG* convertor = new KHTML2PNG(args->isSet("jscript"),
+			args->isSet("java"),
+			args->isSet("plugin"),
+			args->isSet("refresh"),
+			args->isSet("localonly"));
+    
+	if (strcmp(args->arg(0),ids)==0) {
+		while (scanf(" %[^\n]",  Input) != EOF && scanf(" %s", ids) != EOF 
+			&& scanf(" %d", &scaledWidth) != EOF && scanf(" %d", &scaledHeight)
+			&& scanf(" %d", &flashDelay)) {
+			convertor->processBatch(ids, Input, width, height, time, flashDelay, scaledWidth, scaledHeight);
+			printf ("Thumbnail from %s saved to %s (flash: %s; last modified: %s).\n", Input, ids, convertor->haveFlash()?"yes":"no", convertor->lastModified().isNull()?"":convertor->lastModified().ascii());
+			fflush(NULL);
+		}
 	} else {
-		QImage scaledImage = renderedImage->smoothScale(scaledWidth, scaledHeight);
-
-		if (filename.endsWith(".jpeg") || filename.endsWith(".jpg")) {
-			scaledImage.save(args->arg(1), "JPEG");
-		} else {
-			scaledImage.save(args->arg(1), "PNG");
-		}
+		convertor->processBatch(args->arg(1), args->arg(0), width, height, time, flashDelay, scaledWidth, scaledHeight);	
 	}
-
-	delete renderedImage;
 	delete convertor;
 }
 
