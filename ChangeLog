@@ -1,3 +1,8 @@
+
+cha: Now waits until the page loading is finished before the screenshot is made.
+cha: Now with checking for the size of the HTML page to avoid making screenshots bigger than the HTML page.
+cha: "flash-delay" isn't needed any more.
+new: Now with CMake configuring script.
 h:2006-01-11 New version 2.0.5
 fix: Fixed a crash (thx jydelort)
 fix: Fixed endless loop occurring while capturing some sites (thx jydelort)

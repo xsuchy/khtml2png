@@ -1,7 +1,7 @@
 /*  Render HTML page, write out as PNG
 	Heavily based on KDE HTML thumbnail creator
 	Copyright (C) 2003 Simon MacMullen
-	Copyright (C) 2004-2005 Hauke Goos-Habermann
+	Copyright (C) 2004-2006 Hauke Goos-Habermann
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public
@@ -19,12 +19,12 @@
 	Boston, MA 02111-1307, USA.
 */
 
-
 #include <time.h>
 
 #include <qpixmap.h>
 #include <qimage.h>
 #include <qpainter.h>
+#include <qobjectlist.h>
 
 #include <kapplication.h>
 #include <khtml_part.h>
@@ -59,6 +59,69 @@ bool autoDetect;
 //ID of the HTML element to use as bottom right border for the screenshot
 QString autoDetectItemName;
 bool detectionCompleted=false;
+
+
+
+
+
+/**
+**name grabChildWidgets( QWidget * w )
+**description Creates a screenshot with all widgets of a window.
+**parameter w: Pointer to the window widget.
+**returns: QPixmap with the screenshot.
+**/
+QPixmap KHTML2PNG::grabChildWidgets( QWidget * w )
+{
+	/*
+		This solution was taken from:
+		http://lists.kde.org/?l=kde-devel&m=108664293315286&w=2
+	*/
+	char fn[50];
+	int x=w->width(),
+		y=w->height();
+	
+	kapp->postEvent( w, new QPaintEvent( w->rect(), Qt::WRepaintNoErase));
+	kapp->processOneEvent();
+	QPixmap res( w->width(), w->height() );
+	if ( res.isNull() && w->width() )
+		return res;
+	res.fill( w, QPoint( 0, 0 ) );
+	::bitBlt( &res, QPoint(0, 0), w, w->rect(), Qt::CopyROP, true );
+
+	const QObjectList * children = w->children();
+	if ( children ) {
+		QPainter p( &res, TRUE );
+		QObjectListIt it( *children );
+		QObject * child;
+		while( (child=it.current()) != 0 ) {
+			++it;
+			if ( child->isWidgetType() &&
+				 ((QWidget *)child)->geometry().intersects( w->rect() ) &&
+				 ! child->inherits( "QDialog" ) ) {
+
+				// those conditions aren't quite right, it's possible
+				// to have a grandchild completely outside its
+				// grandparent, but partially inside its parent.  no
+				// point in optimizing for that.
+
+				// make sure to evaluate pos() first - who knows what
+				// the paint event(s) inside grabChildWidgets() will do.
+				QPoint childpos = ((QWidget *)child)->pos();
+				QPixmap cpm = grabChildWidgets( (QWidget *)child );
+				
+				if ( cpm.isNull() ) {
+					// Some child pixmap failed - abort and reset
+					res.resize( 0, 0 );
+					break;
+				}
+			   
+				p.drawPixmap( childpos, cpm);
+				p.flush();
+			}
+		}
+	}
+	return res;
+}
 
 
 
@@ -113,6 +176,19 @@ void KHTML2PNG::openURLRequest(const KURL &url, const KParts::URLArgs & )
 
 
 /**
+**name completed()
+**description Is connected to the completed() signal of KParts::ReadOnlyPart that is emitted when the page is loaded completely. This procedure makes the "loading finished" status available for the whole programm.
+**/
+void KHTML2PNG::completed()
+{
+	loadingCompleted=true;
+}
+
+
+
+
+
+/**
 **name create_m_html()
 **description Creates the needed KHTMLPart object for the browser and connects signals and slots.
 **/
@@ -127,12 +203,18 @@ void KHTML2PNG::create_m_html()
 	m_html->setPluginsEnabled(true);
 	m_html->setMetaRefreshEnabled(false);
 	m_html->setOnlyLocalReferences(false);
+	m_html->setAutoloadImages(true);
 	m_html->view()->setResizePolicy(QScrollView::Manual);
 
 	//this is needed for navigation on the page e.g. clicking on links
 	connect( m_html->browserExtension(),
 	SIGNAL( openURLRequest( const KURL &, const KParts::URLArgs & ) ),
 	this, SLOT( openURLRequest(const KURL &, const KParts::URLArgs & ) ) );
+	connect( m_html,
+	SIGNAL( completed() ),this, SLOT( completed() ));
+
+	//at the beginning the loading isn't completely
+	loadingCompleted=false;
 
 	//show the window
 	m_html->view()->show();
@@ -152,7 +234,11 @@ void KHTML2PNG::showMiniBrowser(const QString &path)
 {
 	create_m_html();
 	m_html->openURL(path);
-	kapp->processOneEvent();
+
+	//make sure the page is loaded completely
+	while (!loadingCompleted)
+		kapp->processOneEvent();
+	
 	m_html->view()->resize(xOrig, yRemain);
 	kapp->processOneEvent();
 
@@ -175,72 +261,130 @@ void KHTML2PNG::showMiniBrowser(const QString &path)
 **parameter yPos (global): top position to scroll to
 **returns the visible part as a pointer QImage
 **/
-QImage* KHTML2PNG::create(const QString &path, int flashDelay)
+QImage* KHTML2PNG::create(const QString &path/*, int flashDelay*/)
 {
 	int visibleX,visibleY;
+	QPixmap pix;
 
 	if (!m_html)
 	{
+		int maxX=0, //size of the HTML document
+			maxY=0,
+			sizeDiffX=0,
+			sizeDiffY=0;
+
 		/*
 			if the KHTMLPart object doesn't exist, create it
 			set some basic HTML settings
 			and open the window
 		*/
 		create_m_html();
-	}
+		
+		//open the HTMl page in the window
+		m_html->openURL(path);
 
-	//open the HTMl page in the window
-	m_html->openURL(path);
-	kapp->processOneEvent();
-	
-	m_html->view()->setMarginWidth(0);
-	m_html->view()->setMarginHeight(0);
+		//make sure the page is loaded completely
+		while (!loadingCompleted)
+			kapp->processOneEvent();
 
-	//resize the window to the wanted size
-	m_html->view()->resize(xCapture, yCapture);
+		m_html->view()->setMarginWidth(0);
+		m_html->view()->setMarginHeight(0);
 
-	//check what visible size we've got
-	visibleX=m_html->view()->clipper()->rect().width();
-	visibleY=m_html->view()->clipper()->rect().height();
-
-	//calculate the difference and adjust the capture size
-	yCapture+=yCapture-visibleY;
-	xCapture+=xCapture-visibleX;
-
-	//set the new capture size (we get hopefully the correct size *cross your fingers*)
-	m_html->view()->resize(xCapture, yCapture);
-	kapp->processOneEvent();
-
-	//stop the animations
-	m_html->stopAnimations();
-	
-
-	m_completed = false;
-	//start loop
-	while (!m_completed)
+		//resize the window to the wanted size
+		m_html->view()->resize(xCapture, yCapture);
 		kapp->processOneEvent();
-	killTimers();
+
+		//stop the animations
+		m_html->stopAnimations();
+		kapp->processOneEvent();
+
+		//make a test screenshot to check what visible size we've got
+		pix = grabChildWidgets(m_html->view()->clipper());
+		visibleX=pix.width();
+		visibleY=pix.height();
+
+		/*
+			calculate the difference and adjust the capture size only if it's a small difference
+
+			annotation: small values normally mean the difference between the window size and the
+			window area that contains the HTML page. The visible area is reduced e.g. by scrollbars
+			or the window title.
+		*/
+		sizeDiffX = xCapture-visibleX;
+		if (sizeDiffX < 20)
+			xCapture+=sizeDiffX;
+		sizeDiffY = yCapture-visibleY;
+		if (sizeDiffY < 20)
+			yCapture+=sizeDiffY;
+
+		//set the new capture size (we get hopefully the correct size *cross your fingers*)
+		m_html->view()->resize(xCapture, yCapture);
+		kapp->processOneEvent();
+
+		/*
+			annotation: There seem to be lots of bugs in the KDElibs and underlaying QT functions.
+				-> m_html->view()->contentsHeight(): doesn't return a correct height (more than 2x of the correct value)
+				-> m_html->view()->horizontalScrollBar()->maxValue(): returns 0
+				
+			That's why all HTML elements in the document are searched. The most right point of an element is assumed as the
+			document's width and the most bottom as the height.
+		*/
+		DOM::Node nodeJumper=m_html->htmlDocument().all().firstItem();
+
+		if (!nodeJumper.isNull())
+		{
+			//get its position
+			QRect rec = nodeJumper.getRect();
+			if (rec.right() > maxX)
+				maxX = rec.right();
+			if (rec.bottom() > maxY)
+				maxY = rec.bottom();
+		}
+
+		//adjust capture size so we don't try to get pixels from outside the document
+		if (xOrig > maxX)
+			xRemain = xOrig = maxX;
+		if (yRemain > maxY)
+			yRemain = maxY;
+	}
 
 	//scroll to the beginning of the next part
 	m_html->view()->verticalScrollBar()->setValue(yPos);
 	m_html->view()->horizontalScrollBar()->setValue(xPos);
 	kapp->processOneEvent();
 
-	QPixmap pix;
+	//grab the visible window
+	pix = grabChildWidgets(m_html->view()->clipper());
 
-	// Wait for the flash movie to play
-	m_flashStarted = false;
-	startTimer(flashDelay * 1000);
-		while (!m_flashStarted)
-		kapp->processOneEvent();
-	killTimers();
-
-    //grab the window
-	pix = QPixmap::grabWindow(m_html->view()->clipper()->winId());	
-
-	//get the size of the captured aread
+	//get the size of the captured area
 	yVisible=pix.height();
 	xVisible=pix.width();
+
+	if ((yVisible > yCapture) || (xVisible > xCapture))
+	{
+		int scrollerVPos=m_html->view()->verticalScrollBar()->value(), //top left position of the visible page part
+			scrollerHPos=m_html->view()->horizontalScrollBar()->value(),
+			xSize,ySize;
+		
+		//check if the width of the screenshot should be smaller than the screen width
+		if (xVisible > xCapture)
+			xSize = xCapture;
+		else
+			xSize = m_html->view()->clipper()->width();
+
+		//check if the height of the screenshot should be smaller than the screen height
+		if (yVisible > yCapture)
+			ySize = yCapture;
+		else
+			ySize = m_html->view()->clipper()->height();
+
+		//create a temporary pixmap for storing the clipped visible window part
+		QPixmap temp(xSize, ySize);
+
+		//copy the missing parts from the window in the pixmap
+		::bitBlt( &temp, 0, 0, &pix,  xPos-scrollerHPos, yPos-scrollerVPos, xSize, ySize, Qt::CopyROP);
+		pix=temp;
+	};
 
 	return new QImage(pix.convertToImage());
 }
@@ -275,7 +419,7 @@ static KCmdLineOptions options[] =
 {
 	{ "width ", "Width of canvas on which to render html", "800" },
 	{ "height ", "Height of canvas on which to render html", "1000" },
-	{ "flash-delay ", "Pause after loading page to allow flash movie to fade up", "3" },
+	/*{ "flash-delay ", "Pause after loading page to allow flash movie to fade up", "3" },*/
 	{ "time ", "Maximum time in seconds to spend loading page", "30" },
 	{ "auto ", "Use this option if you to autodetect the bottom/right border", "" },
 	{ "+url ", "URL of page to render", 0 },
@@ -291,16 +435,16 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
 	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"),
-		"2.0.5",
+		"2.5.0",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
 Example: khtml2png2 --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
 or\n\
 khtml2png --auto ID_border http://www.kde.org/ kde-org.png\n\
 CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 		KAboutData::License_GPL,
-		"(c) 2003 Simon MacMullen & Hauke Goos-Habermann 2004-2005");
+		"(c) 2003 Simon MacMullen & Hauke Goos-Habermann 2004-2006");
 	aboutData.addAuthor("Simon MacMullen", 0, "s.macmullen@ry.com");
-	aboutData.addAuthor("Hauke Goos-Habermann", 0, "hhabermann@pc-kiel.de","http://m23.sf.net");
+	aboutData.addAuthor("Hauke Goos-Habermann", 0, "hhabermann@pc-kiel.de","http://khtml2png.sourceforge.net");
 	KCmdLineArgs::init(argc, argv, &aboutData);
 	KCmdLineArgs::addCmdLineOptions(options);
 	KCmdLineArgs *args=KCmdLineArgs::parsedArgs();
@@ -349,18 +493,19 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 	};
 
 	int	xNr = 0,
-		yNr = 0;
+		yNr = 0,
+		origWidth;
 
-	int flashDelay = 2;
+	//int flashDelay = 2;
 
 	char 	nrStr[10], //temporary buffer to convert int -> char
 			cmd[5000], //command line string
 			tempName[100]; //the name of the part image file
 
-	if (args->isSet("flash-delay"))
+	/*if (args->isSet("flash-delay"))
 	{
 		flashDelay = QString::fromLatin1(args->getOption("flash-delay")).toInt();
-	}
+	}*/
 
 	KInstance inst(&aboutData);
 	KApplication app;
@@ -375,6 +520,10 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 	if (autoDetect)
 		convertor->showMiniBrowser(path);
 
+	system("rm /tmp/khtml2png.png_*");
+	
+	origWidth = xOrig;
+
 	while (!lastXShot || !lastYShot)
 		{
 			xPos = 0;
@@ -384,7 +533,6 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 
 			xNr = 0;
 
-
 			while (!lastXShot)
 				{
 					//set capture size in the inner loop because xCapture and yCapture are overwritten by convertor->create
@@ -392,7 +540,7 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 					xCapture = xRemain;
 
 					//capture the part of the screen
-					QImage* renderedImage = convertor->create(path, flashDelay);
+					QImage* renderedImage = convertor->create(path/*, flashDelay*/);
 
 					//generate the filename of the capture part file
 					QString filename = "/tmp/khtml2png.png";

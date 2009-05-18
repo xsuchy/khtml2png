@@ -1,0 +1,6 @@
+#Uses statifier from http://statifier.sourceforge.net/
+
+moc khtml2png.h > khtml2png.moc
+gcc -L /usr/lib/kde3 -L /usr/lib -I /usr/include/kde -I /usr/include/qt3/ -lz -lkdecore -lkdeprint -lkdeui -lkio -lkhtml -lkio -lkparts -lkspell khtml2png.cpp -o khtml2pngDyn
+statifier khtml2pngDyn khtml2pngStatic
+bzip2 khtml2pngStatic

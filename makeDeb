@@ -1,2 +1,0 @@
-echo khtml2png | checkinstall -D --pkgname=khtml2png --pkgversion=1.0.4 --nodoc ./copyBin
-mv khtml2png_1.0.4-1_i386.deb /mdk/m23Debs/debs/

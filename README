@@ -1,0 +1,50 @@
+khtml2png2
+==========
+
+khtml2png is a command line program to create screenshots of webpages. It uses
+libkhtml (the library that is used in the KDE webbrowser Konqueror) and 
+"convert" from the ImageMagick graphic conversion toolkit.
+
+
+Requirements
+============
+For running and compiling you need some libraries and tools. You can find the
+Debian package names in braces.
+
+	* g++
+	* KDE 3.x
+	* kdelibs for KDE 3.x (kdelibs4-dev)
+	* zlib (zlib1g-dev)
+	* cmake
+
+
+Introducing informations
+========================
+Extract the archive with: tar xfvz <file name>
+
+Afterwards check the requirements and install missing development packages.
+
+
+Compiling and installation
+==========================
+This is done with the usual three steps
+
+	1. ./configure
+	2. make
+	3. make install
+
+
+Static file
+===========
+If you have chosen the precompiled statically linked file you don't need to
+install KDE or KDE librariers. Just extract the file with
+
+	bunzip2 <file name>
+
+and place it in a directory used for binaries (e.g. /usr/bin or /usr/local/bin).
+If you like you can rename the executable.
+!!! Make sure the khtml2png2 file is executable (e.g. chmod +x <file name>). !!!
+
+
+Running
+=======

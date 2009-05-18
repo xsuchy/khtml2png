@@ -1,7 +1,7 @@
 /*  Render HTML page, write out as PNG
  *  Heavily based on KDE HTML thumbnail creator
  *  Copyright (C) 2003 Simon MacMullen
- *  Copyright (C) 2004-2005 Hauke Goos-Habermann
+ *  Copyright (C) 2004-2006 Hauke Goos-Habermann
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -29,15 +29,17 @@ class KHTML2PNG : public QObject
 	Q_OBJECT
 
 public:
-	QImage* create(const QString &path, int flashDelay);
+	QImage* create(const QString &path/*, int flashDelay*/);
 	void showMiniBrowser(const QString &path);
 
 public slots:
 	void openURLRequest(const KURL &url, const KParts::URLArgs & );
+	void completed();
 
 protected:
 	virtual void timerEvent(QTimerEvent *);
 	void create_m_html();
+	QPixmap grabChildWidgets( QWidget * w );
 
 private slots:
 	void slotCompleted();
@@ -46,6 +48,7 @@ private:
 	bool m_flashStarted;
 	bool m_completed;
 	bool browser;
+	bool loadingCompleted; //indicates is the page is loaded completely
 };
 
 #endif
