@@ -1,0 +1,46 @@
+h:2008-04-18 2.7.5 improved size detection of huge screenshots
+This release was improved by Florent Bruneau
+cha: Fixed problems with screenshots of very big webpages that showed gray bars
+h:2007-12-03 New options in new version 2.7.0
+This release was improved by Florent Bruneau and Floren Munteanu.
+new: Options to allow the user to scale the size of the output image independently to the size of the screenshot.
+new: Option to allow creation of a screenshot without drawing the rendering window (but in this case, the buttons are not correctly rendered).
+h:2007-07-19 Added FAQ
+Added a page with frequently asked questions.
+h:2007-06-27 New version 2.6.7
+This release was improved by Alex Osborne
+cha: Decreased CPU load.
+cha: Added timeout option for loading pages.
+h:2007-06-04 New version 2.6.5
+This release was improved by Florent Bruneau.
+fix: Now produces screenshots on my Debian Etch system under KDE 3.5.5 without glitches.
+fix: Maybe better working on other systems too. Please test.
+h:2007-03-13 New version 2.6.0
+This release was highly improved by Florent Bruneau.
+cha: Remove dependence on ImageMagick and use Qt to do exactly the same thing (Florent)
+fix: Fix buffer overflow vulnerabilities (Florent)
+fix: Fix a code injection vulnerability (Florent)
+cha: Auto-kill QMessageBox (so the program no more needs user interactions in the X session)
+cha: Removed as much as possible of duplicated code. (Florent)
+fix: Fix some issues I met on very large screenshots. (Florent)
+cha: Concluding code aligning, function descriptions, programm information. (Hauke)
+h:2006-07-03 New version 2.5.0
+cha: Now waits until the page loading is finished before the screenshot is made.
+cha: Now with checking for the size of the HTML page to avoid making screenshots bigger than the HTML page.
+cha: "flash-delay" isn't needed any more.
+new: Now with CMake configuring script.
+h:2006-01-11 New version 2.0.5
+fix: Fixed a crash (thx jydelort)
+fix: Fixed endless loop occurring while capturing some sites (thx jydelort)
+cha: INSTALL includes compiling instructions for Mandriva now.
+h:2005-11-18 New version 2.0.2
+fix: Now scrolling in X and Y direction should work without duplicating parts of the image.
+cha: Setting the khtml2png window to borderless isn't needed any more.
+new: makeTarRelease.sh: Makes a tar.gz file that contains the source of khtml2png
+new: uploadTar.sh: Uploads the tar to SF
+h:2005-11-17 Fix in the khtml2png 2.0.1 package
+There was a problem with the configure script. Inside from KDevelop 3.3 configuration and compiling worked well but 
+not from plain command line. Now there is a new khtml2png 2.0.1 package with a fixed configure script that checks for 
+missing dependencies.
+h:2005-11-15 Initial site and source files for khtml2png 2.x uploaded
+Today starts the new web site for khtml2png.

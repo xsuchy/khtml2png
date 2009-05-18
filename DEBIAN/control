@@ -1,0 +1,9 @@
+Package: khtml2png
+Version: 2.7.5
+Section: base
+Priority: optional
+Architecture: i386
+Depends: bash, kdelibs4c2a, libkonq4
+Maintainer: Hauke Goos-Habermann <hhabermann@pc-kiel.de>
+Description: khtml2png is a command line program to create
+ screenshots of webpages.

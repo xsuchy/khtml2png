@@ -1,0 +1,1 @@
+rm -r CMakeFiles CMakeCache.txt cmake_install.cmake Doxyfile *.moc khtml2png2 *.kdevelop khtml2png2.kdevelop.filelist khtml2png2.kdevses
