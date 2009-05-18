@@ -1,3 +1,7 @@
+h:2007-12-03 New options in new version 2.7.0
+This release was improved by Florent Bruneau and Floren Munteanu.
+new: Options to allow the user to scale the size of the output image independently to the size of the screenshot.
+new: Option to allow creation of a screenshot without drawing the rendering window (but in this case, the buttons are not correctly rendered).
 h:2007-07-19 Added FAQ
 Added a page with frequently asked questions.
 h:2007-06-27 New version 2.6.7

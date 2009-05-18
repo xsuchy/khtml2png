@@ -31,17 +31,19 @@ class KCmdLineArgs;
 class KHTML2PNG : public KApplication
 {
     Q_OBJECT
-    
+
     KHTMLPart *m_html;
     bool m_completed;
     bool browser;
     bool loadingCompleted; //indicates if the page is loaded completely
     bool detectionCompleted;
     bool killPopup;
-    
+    bool show;
+
     QString autoDetectId;
     QString filename;
     QRect   rect;
+    QSize   scaled;
     QPixmap *pix;
 
     int xVisible;

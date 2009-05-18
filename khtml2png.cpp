@@ -1,8 +1,9 @@
 /*  Render HTML page, write out as PNG
     Heavily based on KDE HTML thumbnail creator
     Copyright (C) 2003 Simon MacMullen
-    Copyright (C) 2004-2006 Hauke Goos-Habermann
+    Copyright (C) 2004-2007 Hauke Goos-Habermann
     Copyright (C) 2007 Florent Bruneau
+    Copyright (C) 2007 Alex Osborne
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public
@@ -54,10 +55,19 @@ KHTML2PNG::KHTML2PNG(const KCmdLineArgs* const args)
 {
 	const QString width  = args->getOption("width");
 	const QString height = args->getOption("height");
+	const QString scaledWidth = args->getOption("scaled-width");
+	const QString scaledHeight = args->getOption("scaled-height");
 	autoDetectId = args->getOption("auto");
 	timeoutMillis = args->getOption("time").toUInt() * 1000;
+	show = !args->isSet("disable-window");
 
 	rect = QRect(0, 0, width.isEmpty() ? -1 : width.toInt(), height.isEmpty() ? -1 : height.toInt());
+	if (!scaledWidth.isEmpty()) {
+		scaled.setWidth(scaledWidth.toInt());
+	}
+	if (!scaledHeight.isEmpty()) {
+		scaled.setHeight(scaledHeight.toInt());
+	}
 
 	detectionCompleted = false;
 	loadingCompleted   = false;
@@ -126,8 +136,8 @@ QPixmap *KHTML2PNG::grabChildWidgets(QWidget* w) const
 {
 	/*
 	   This solution was taken from:
-http://lists.kde.org/?l=kde-devel&m=108664293315286&w=2
-*/
+	   http://lists.kde.org/?l=kde-devel&m=108664293315286&w=2
+	*/
 	w->repaint(false);
 	QPixmap *res = new QPixmap(w->width(), w->height());
 	if (w->rect().isEmpty())
@@ -285,7 +295,10 @@ void KHTML2PNG::init(const QString& path, const bool js, const bool java, const 
 
 	//show the window
 	m_html->view()->move(0, 0);
-	m_html->view()->showMaximized();
+	if (show)
+	{
+		m_html->view()->showMaximized();
+	}
 	processEvents(200);
 	xVisible = m_html->view()->clipper()->width() - 20;
 	yVisible = m_html->view()->clipper()->height() - 20;
@@ -344,7 +357,8 @@ void KHTML2PNG::doRendering()
 			processEvents(200);
 
 			//capture the part of the screen
-			const QPixmap* const temp = grabChildWidgets(m_html->view()->clipper());
+			const QPixmap* const temp = show ? grabChildWidgets(m_html->view()->clipper())
+						         : new QPixmap(QPixmap::grabWidget(m_html->view()->clipper()));
 			QRect pos = temp->rect();
 			pos.setLeft(pos.left() + xPos);
 			pos.setTop(pos.top() + yPos);
@@ -367,11 +381,22 @@ void KHTML2PNG::doRendering()
 bool KHTML2PNG::save() const
 {
 	QString format = filename.section('.', -1).stripWhiteSpace().upper();
+	QImage  image;
 	if (format == "JPG" || format == "JPE")
 	{
 		format = "JPEG";
 	}
-	return pix->convertToImage().save(filename, format);
+
+	image = pix->convertToImage();
+	if (scaled.isEmpty() && (scaled.width() > 0 || scaled.height() > 0))
+	{
+		image = image.smoothScale(scaled, QImage::ScaleMax);
+	}
+	else if (!scaled.isEmpty())
+	{
+		image = image.smoothScale(scaled, QImage::ScaleMin);
+	}
+	return image.save(filename, format);
 }
 
 
@@ -387,10 +412,15 @@ static KCmdLineOptions options[] =
 	{ "w", 0, 0},
 	{ "width <width>", "Width of canvas on which to render html", "800" },
 	{ "h", 0, 0},
-	{ "height <height>", "Height of canvas on which to render html", "1000" },
+	{ "height <height>", "Height of canvas on which to render html", "600" },
+	{ "sw", 0, 0},
+	{ "scaled-width <width>", "Width of image to produce", "" },
+	{ "sh", 0, 0},
+	{ "scaled-height <height>", "Height of image to produce", "" },
 	{ "t", 0, 0},
 	{ "time <time>", "Maximum time in seconds to spend loading page", "30" },
 	{ "auto <id>", "Use this option if you to autodetect the bottom/right border", "" },
+	{ "disable-window", "If set, don't show the window when doing rendering (can lead to missing items)", 0 },
 	{ "disable-js", "Enable/Disable javascript (enabled by default)", 0 },
 	{ "disable-java", "Enable/Disable java (enabled by default)", 0},
 	{ "disable-plugins", "Enable/Disable KHTML plugins (like Flash player, enabled by default)", 0},
@@ -407,14 +437,14 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.6.7",
-			     I18N_NOOP("Render HTML to a PNG from the command line\n\
-				       Example:\n\
-				       khtml2png2 --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
-				       or\n\
-				       khtml2png --auto ID_border http://www.kde.org/ kde-org.png"),
-			     KAboutData::License_GPL,
-			     "(c) 2003 Simon MacMullen, 2004-2007 Hauke Goos-Habermann, 2007 Florent Bruneau, 2007 Alex Osborne");
+	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.7.0",
+		I18N_NOOP("Render HTML to a PNG from the command line\n\
+			Example:\n\
+			khtml2png2 --width 800 --height 600 http://www.kde.org/ kde-org.png\n\
+			or\n\
+			khtml2png --auto ID_border http://www.kde.org/ kde-org.png"),
+		KAboutData::License_GPL,
+			"(c) 2003 Simon MacMullen, 2004-2007 Hauke Goos-Habermann, 2007 Florent Bruneau, 2007 Alex Osborne");
 	aboutData.addAuthor("Simon MacMullen", 0, "s.macmullen@ry.com");
 	aboutData.addAuthor("Hauke Goos-Habermann", 0, "hhabermann@pc-kiel.de","http://khtml2png.sourceforge.net");
 	aboutData.addAuthor("Florent Bruneau", 0, "florent.bruneau@m4x.org", "http://fruneau.rznc.net");
@@ -431,7 +461,7 @@ int main(int argc, char **argv)
 
 	KInstance inst(&aboutData);
 	KHTML2PNG app(args);
-	app.exec(); 
+	app.exec();
 }
 
 #include "khtml2png.moc"
