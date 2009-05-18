@@ -3,13 +3,13 @@
 <KDevPrjSession>
  <DocsAndViews NumberOfDocuments="4" >
   <Doc0 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp" >
-   <View0 line="402" Type="Source" />
+   <View0 line="291" Type="Source" />
   </Doc0>
   <Doc1 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.h" >
-   <View0 line="35" Type="Source" />
+   <View0 line="3" Type="Source" />
   </Doc1>
   <Doc2 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/INSTALL" >
-   <View0 line="29" Type="Source" />
+   <View0 line="0" Type="Source" />
   </Doc2>
   <Doc3 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/ChangeLog" >
    <View0 line="0" Type="Source" />
@@ -17,24 +17,21 @@
  </DocsAndViews>
  <pluginList>
   <kdevdebugger>
-   <breakpointList>
-    <breakpoint0 location="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp:395" type="1" condition="" enabled="1" />
-   </breakpointList>
+   <breakpointList/>
   </kdevdebugger>
   <kdevbookmarks>
    <bookmarks>
     <bookmark url="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp" >
-     <mark line="357" />
-     <mark line="156" />
-     <mark line="89" />
-     <mark line="179" />
+     <mark line="375" />
+     <mark line="158" />
+     <mark line="91" />
+     <mark line="183" />
+     <mark line="201" />
     </bookmark>
    </bookmarks>
   </kdevbookmarks>
   <kdevrbdebugger>
-   <breakpointList>
-    <breakpoint0 location="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp:395" type="1" enabled="1" />
-   </breakpointList>
+   <breakpointList/>
    <watchExpressions>
     <el>kapp</el>
     <el>muh</el>

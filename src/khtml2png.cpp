@@ -124,7 +124,7 @@ void KHTML2PNG::create_m_html()
 	m_html->setJavaEnabled(true);
 	m_html->setPluginsEnabled(true);
 	m_html->setMetaRefreshEnabled(true);
-	m_html->setOnlyLocalReferences(false);		
+	m_html->setOnlyLocalReferences(false);
 	m_html->view()->setResizePolicy(QScrollView::Manual);
 
 	//this is needed for navigation on the page e.g. clicking on links
@@ -207,8 +207,10 @@ QImage* KHTML2PNG::create(const QString &path, int flashDelay)
 
 	//set the new capture size (we get hopefully the correct size *cross your fingers*)
 	m_html->view()->resize(xCapture, yCapture);
-
 	kapp->processOneEvent();
+
+	//stop the animations
+	m_html->stopAnimations();
 	
 
 	m_completed = false;
@@ -287,7 +289,7 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
 	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"),
-		"2.0.2",
+		"2.0.3",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
 Example: khtml2png --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
 or\n\

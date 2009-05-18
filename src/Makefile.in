@@ -276,7 +276,7 @@ bin_PROGRAMS = khtml2png2
 
 
 # the application source, library search path, and link libraries
-khtml2png2_LDFLAGS = $(KDE_RPATH) $(all_libraries) -lz -lkabc -lkdecore -lkdeprint -lkdeui -lkio -lkhtml -lkio -lkparts -lkspell
+khtml2png2_LDFLAGS = $(KDE_RPATH) $(all_libraries) -lz -lkabc -lkdecore -lkdeprint -lkdeui -lkio -lkhtml -lkio -lkparts -lkspell -lpthread
 khtml2png2_LDADD = $(LIB_KDEUI)
 
 # this is where the desktop file will go 
