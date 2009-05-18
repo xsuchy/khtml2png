@@ -1,3 +1,6 @@
 ./makeClean
 cmake . -G KDevelop3
 cmake .
+
+#cmake -G KDevelop3 -D QT_INCLUDE_DIR:PATH=/opt/local/include/qt3 -D QT_MOC_EXECUTABLE:FILEPATH=/opt/local/bin/moc .
+#cmake -D QT_INCLUDE_DIR:PATH=/opt/local/include/qt3 -D QT_MOC_EXECUTABLE:FILEPATH=/opt/local/bin/moc .

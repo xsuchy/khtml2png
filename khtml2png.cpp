@@ -32,6 +32,7 @@
 #include <kcmdlineargs.h>
 #include <klocale.h>
 #include <kaboutdata.h>
+#include <stdlib.h>
 
 #include <dom/html_misc.h> //<-- use this for Mandriva
 //#include <kde/dom/html_misc.h> //<-- use this for other distributions
@@ -51,7 +52,7 @@
  **parameter height: Height of the screenshot (if id is empty)
  **/
 KHTML2PNG::KHTML2PNG(const KCmdLineArgs* const args)
-:KApplication(), m_html(0), pix(0)
+:KApplication(), m_html(0), getBody(false), pix(0)
 {
 	const QString width  = args->getOption("width");
 	const QString height = args->getOption("height");
@@ -59,6 +60,7 @@ KHTML2PNG::KHTML2PNG(const KCmdLineArgs* const args)
 	const QString scaledHeight = args->getOption("scaled-height");
 	autoDetectId = args->getOption("auto");
 	timeoutMillis = args->getOption("time").toUInt() * 1000;
+	getBody = args->isSet("get-body");
 	show = !args->isSet("disable-window");
 
 	rect = QRect(0, 0, width.isEmpty() ? -1 : width.toInt(), height.isEmpty() ? -1 : height.toInt());
@@ -211,15 +213,27 @@ void KHTML2PNG::resizeClipper(const int width, const int height)
 void KHTML2PNG::completed()
 {
 	loadingCompleted = true;
-	if (!detectionCompleted && !autoDetectId.isEmpty())
+	if (!detectionCompleted && (getBody || !autoDetectId.isEmpty()))
 	{
 		//search for the HTML element
-		DOM::Node markerNode = m_html->htmlDocument().all().namedItem(autoDetectId);
+		DOM::Node markerNode;
+		if (getBody)
+		{
+			markerNode = m_html->htmlDocument().body();
+		}
+		else
+		{
+			markerNode = m_html->htmlDocument().all().namedItem(autoDetectId);
+		}
 
 		if (!markerNode.isNull())
 		{
 			//get its position
-			rect = m_html->htmlDocument().all().namedItem(autoDetectId).getRect();
+			QRect tmpRect = m_html->htmlDocument().all().namedItem(autoDetectId).getRect();
+			if (getBody && rect.width() > 0) {
+				tmpRect.setWidth(rect.width());
+			}
+			rect = tmpRect;
 			if (rect.isEmpty()) {
 				rect = QRect(0, 0, rect.right(), rect.bottom());
 			}
@@ -228,7 +242,11 @@ void KHTML2PNG::completed()
 			right = right > rect.right() ? right : rect.right() + 200;
 			bottom = bottom > rect.bottom() ? bottom : rect.bottom() + 200;
 			resizeClipper(right, bottom);
-			rect = m_html->htmlDocument().all().namedItem(autoDetectId).getRect();
+			tmpRect = m_html->htmlDocument().all().namedItem(autoDetectId).getRect();
+			if (getBody) {
+				tmpRect.setWidth(rect.width());
+			}
+			rect = tmpRect;
 			if (rect.isEmpty()) {
 				rect = QRect(0, 0, rect.right(), rect.bottom());
 			}
@@ -425,6 +443,8 @@ static KCmdLineOptions options[] =
 	{ "t", 0, 0},
 	{ "time <time>", "Maximum time in seconds to spend loading page", "30" },
 	{ "auto <id>", "Use this option if you to autodetect the bottom/right border", "" },
+	{ "get-body", "Autodected the body of the page (if width is not detected, use --width)", 0 },
+	{ "b", 0, 0 },
 	{ "disable-window", "If set, don't show the window when doing rendering (can lead to missing items)", 0 },
 	{ "disable-js", "Enable/Disable javascript (enabled by default)", 0 },
 	{ "disable-java", "Enable/Disable java (enabled by default)", 0},
@@ -442,7 +462,7 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.7.5",
+	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.7.6",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
 			Example:\n\
 			khtml2png2 --width 800 --height 600 http://www.kde.org/ kde-org.png\n\

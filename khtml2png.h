@@ -41,6 +41,7 @@ class KHTML2PNG : public KApplication
     bool show;
 
     QString autoDetectId;
+    bool getBody;
     QString filename;
     QRect   rect;
     QSize   scaled;
