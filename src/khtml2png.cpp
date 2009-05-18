@@ -33,7 +33,9 @@
 #include <klocale.h>
 #include <kaboutdata.h>
 #include <stdlib.h>
-#include <kde/dom/html_misc.h>
+
+//#include <dom/html_misc.h> //<-- use this for Mandriva
+#include <kde/dom/html_misc.h> //<-- use this for other distributions
 
 #include "khtml2png.h"
 
@@ -123,7 +125,7 @@ void KHTML2PNG::create_m_html()
 	m_html->setJScriptEnabled(true);
 	m_html->setJavaEnabled(true);
 	m_html->setPluginsEnabled(true);
-	m_html->setMetaRefreshEnabled(true);
+	m_html->setMetaRefreshEnabled(false);
 	m_html->setOnlyLocalReferences(false);
 	m_html->view()->setResizePolicy(QScrollView::Manual);
 
@@ -289,9 +291,9 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
 	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"),
-		"2.0.3",
+		"2.0.5",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
-Example: khtml2png --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
+Example: khtml2png2 --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
 or\n\
 khtml2png --auto ID_border http://www.kde.org/ kde-org.png\n\
 CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
@@ -351,7 +353,7 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 
 	int flashDelay = 2;
 
-	char 	nrStr[5], //temporary buffer to convert int -> char
+	char 	nrStr[10], //temporary buffer to convert int -> char
 			cmd[5000], //command line string
 			tempName[100]; //the name of the part image file
 
@@ -394,7 +396,8 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 
 					//generate the filename of the capture part file
 					QString filename = "/tmp/khtml2png.png";
-					sprintf(nrStr,"_x%iy%i",xNr,yNr);
+					int g = sprintf(nrStr,"_x%iy%i",xNr,yNr);
+					nrStr[g]='\0';
 					filename+=QString(nrStr);
 
 					//save the part

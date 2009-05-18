@@ -1,3 +1,18 @@
+Special notice for Mandriva users
+=================================
+You may have to edit the file khtml2png.cpp to make compiling work with Mandriva.
+
+You can do this by changing
+
+//#include <dom/html_misc.h> //<-- use this for Mandriva
+#include <kde/dom/html_misc.h> //<-- use this for other distributions
+
+into
+
+#include <dom/html_misc.h> //<-- use this for Mandriva
+//#include <kde/dom/html_misc.h> //<-- use this for other distributions
+
+
 Basic Installation
 ==================
 

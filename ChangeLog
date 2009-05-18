@@ -1,3 +1,7 @@
+h:2006-01-11 New version 2.0.5
+fix: Fixed a crash (thx jydelort)
+fix: Fixed endless loop occurring while capturing some sites (thx jydelort)
+cha: INSTALL includes compiling instructions for Mandriva now.
 h:2005-11-18 New version 2.0.2
 fix: Now scrolling in X and Y direction should work without duplicating parts of the image.
 cha: Setting the khtml2png window to borderless isn't needed any more.
