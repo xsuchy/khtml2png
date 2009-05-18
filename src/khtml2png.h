@@ -25,22 +25,26 @@ class KHTMLPart;
 
 class KHTML2PNG : public QObject
 {
-    Q_OBJECT
+	Q_OBJECT
+
 public:
-    KHTML2PNG();
-    ~KHTML2PNG();
-    QImage* create(const QString &path, int width, int height, int time, int flashDelay);
+	QImage* create(const QString &path, int flashDelay);
+	void showMiniBrowser(const QString &path);
+
+public slots:
+	void openURLRequest(const KURL &url, const KParts::URLArgs & );
 
 protected:
-    virtual void timerEvent(QTimerEvent *);
+	virtual void timerEvent(QTimerEvent *);
+	void create_m_html();
 
 private slots:
-    void slotCompleted();
+	void slotCompleted();
 
 private:
-    KHTMLPart *m_html;
-    bool m_completed;
-    bool m_flashStarted;
+	bool m_flashStarted;
+	bool m_completed;
+	bool browser;
 };
 
 #endif

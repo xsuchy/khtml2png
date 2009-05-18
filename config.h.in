@@ -1,15 +1,5 @@
 /* config.h.in.  Generated from configure.in by autoheader.  */
 
-/* Define to the type of elements in the array set by `getgroups'. Usually
-   this is either `int' or `gid_t'. */
-#undef GETGROUPS_T
-
-/* Define to 1 if you have the <Alib.h> header file. */
-#undef HAVE_ALIB_H
-
-/* You _must_ have bool */
-#undef HAVE_BOOL
-
 /* Define if you have the CoreAudio API */
 #undef HAVE_COREAUDIO
 
@@ -19,69 +9,11 @@
 /* Defines if your system has the crypt function */
 #undef HAVE_CRYPT
 
-/* Define to 1 if you have the <crypt.h> header file. */
-#undef HAVE_CRYPT_H
-
-/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
-   */
-#undef HAVE_DIRENT_H
-
 /* Define to 1 if you have the <dlfcn.h> header file. */
 #undef HAVE_DLFCN_H
 
-/* Define to 1 if you have the <floatingpoint.h> header file. */
-#undef HAVE_FLOATINGPOINT_H
-
-/* Define to 1 if you have the <float.h> header file. */
-#undef HAVE_FLOAT_H
-
-/* Define to 1 if you have the <fstab.h> header file. */
-#undef HAVE_FSTAB_H
-
-/* Define if you have getdomainname */
-#undef HAVE_GETDOMAINNAME
-
-/* Define if you have the getdomainname prototype */
-#undef HAVE_GETDOMAINNAME_PROTO
-
-/* Define to 1 if you have the `getdtablesize' function. */
-#undef HAVE_GETDTABLESIZE
-
-/* Define to 1 if you have the `getgroups' function. */
-#undef HAVE_GETGROUPS
-
-/* Define if you have gethostname */
-#undef HAVE_GETHOSTNAME
-
-/* Define if you have the gethostname prototype */
-#undef HAVE_GETHOSTNAME_PROTO
-
-/* Define to 1 if you have the `getpt' function. */
-#undef HAVE_GETPT
-
-/* Define to 1 if you have the `grantpt' function. */
-#undef HAVE_GRANTPT
-
-/* Define to 1 if you have the <ieeefp.h> header file. */
-#undef HAVE_IEEEFP_H
-
-/* Define to 1 if you have the `initgroups' function. */
-#undef HAVE_INITGROUPS
-
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
-
-/* Define to 1 if you have the <krb5/krb5.h> header file. */
-#undef HAVE_KRB5_KRB5_H
-
-/* Defines if you have Solaris' libkstat */
-#undef HAVE_KSTAT
-
-/* Define to 1 if you have the <lastlog.h> header file. */
-#undef HAVE_LASTLOG_H
-
-/* Defines if you have libdevinfo of Solaris 7 or later */
-#undef HAVE_LIBDEVINFO_H
 
 /* Define if you have libjpeg */
 #undef HAVE_LIBJPEG
@@ -92,136 +24,29 @@
 /* Define if you have a working libpthread (will enable threaded code) */
 #undef HAVE_LIBPTHREAD
 
-/* Define if you have libtiff */
-#undef HAVE_LIBTIFF
-
-/* Define to 1 if you have the <libutil.h> header file. */
-#undef HAVE_LIBUTIL_H
-
 /* Define if you have libz */
 #undef HAVE_LIBZ
-
-/* Define to 1 if you have the <limits.h> header file. */
-#undef HAVE_LIMITS_H
-
-/* Define to 1 if you have the <login_cap.h> header file. */
-#undef HAVE_LOGIN_CAP_H
-
-/* Define to 1 if long double works and has more range or precision than
-   double. */
-#undef HAVE_LONG_DOUBLE
-
-/* Define to 1 if you have the <math.h> header file. */
-#undef HAVE_MATH_H
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define if you have mkstemp */
-#undef HAVE_MKSTEMP
-
-/* Define if you have the mkstemp prototype */
-#undef HAVE_MKSTEMP_PROTO
-
-/* Define to 1 if you have the <mntent.h> header file. */
-#undef HAVE_MNTENT_H
-
-/* Define to 1 if you have the <nan.h> header file. */
-#undef HAVE_NAN_H
-
-/* Define to 1 if you have the <ncurses.h> header file. */
-#undef HAVE_NCURSES_H
-
-/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
-#undef HAVE_NDIR_H
-
-/* Define to 1 if you have the `nice' function. */
-#undef HAVE_NICE
-
 /* Define if your system needs _NSGetEnviron to set up the environment */
 #undef HAVE_NSGETENVIRON
-
-/* Defines if you have PAM (Pluggable Authentication Modules) */
-#undef HAVE_PAM
-
-/* Define to 1 if you have the <paths.h> header file. */
-#undef HAVE_PATHS_H
-
-/* Define to 1 if you have the `powl' function. */
-#undef HAVE_POWL
-
-/* Define to 1 if you have the <pthread/linuxthreads/pthread.h> header file.
-   */
-#undef HAVE_PTHREAD_LINUXTHREADS_PTHREAD_H
-
-/* Define to 1 if you have the `ptsname' function. */
-#undef HAVE_PTSNAME
-
-/* Define to 1 if you have the `pw_encrypt' function. */
-#undef HAVE_PW_ENCRYPT
-
-/* Define if you have random */
-#undef HAVE_RANDOM
-
-/* Define if you have the random prototype */
-#undef HAVE_RANDOM_PROTO
 
 /* Define if you have the res_init function */
 #undef HAVE_RES_INIT
 
-/* Define to 1 if you have the <rpc/key_prot.h> header file. */
-#undef HAVE_RPC_KEY_PROT_H
-
-/* Define to 1 if you have the <rpc/rpc.h> header file. */
-#undef HAVE_RPC_RPC_H
-
-/* Define if you have setenv */
-#undef HAVE_SETENV
-
-/* Define if you have the setenv prototype */
-#undef HAVE_SETENV_PROTO
-
-/* Define to 1 if you have the `seteuid' function. */
-#undef HAVE_SETEUID
-
-/* Define to 1 if you have the `setgroups' function. */
-#undef HAVE_SETGROUPS
-
-/* Define to 1 if you have the `setpgid' function. */
-#undef HAVE_SETPGID
-
-/* Define to 1 if you have the `setpriority' function. */
-#undef HAVE_SETPRIORITY
-
-/* Define if you have setupterm in -l(n)curses */
-#undef HAVE_SETUPTERM
-
-/* Define if you use shadow passwords */
-#undef HAVE_SHADOW
+/* Define if you have a STL implementation by SGI */
+#undef HAVE_SGI_STL
 
 /* Define to 1 if you have the `snprintf' function. */
 #undef HAVE_SNPRINTF
-
-/* Define to 1 if you have the `socket' function. */
-#undef HAVE_SOCKET
-
-/* Define to 1 if you have the `sqrtl' function. */
-#undef HAVE_SQRTL
-
-/* Define if you have srandom */
-#undef HAVE_SRANDOM
-
-/* Define if you have the srandom prototype */
-#undef HAVE_SRANDOM_PROTO
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
 
 /* Define to 1 if you have the <stdlib.h> header file. */
 #undef HAVE_STDLIB_H
-
-/* Define to 1 if you have the `strdup' function. */
-#undef HAVE_STRDUP
 
 /* Define to 1 if you have the <strings.h> header file. */
 #undef HAVE_STRINGS_H
@@ -241,136 +66,23 @@
 /* Define if you have the strlcpy prototype */
 #undef HAVE_STRLCPY_PROTO
 
-/* Define to 1 if you have the <stropts.h> header file. */
-#undef HAVE_STROPTS_H
-
-/* Define to 1 if you have the <syslog.h> header file. */
-#undef HAVE_SYSLOG_H
-
-/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
-   */
-#undef HAVE_SYS_DIR_H
-
-/* Define to 1 if you have the <sys/ioctl.h> header file. */
-#undef HAVE_SYS_IOCTL_H
-
-/* Define to 1 if you have the <sys/mount.h> header file. */
-#undef HAVE_SYS_MOUNT_H
-
-/* Define to 1 if you have the <sys/m_wait.h> header file. */
-#undef HAVE_SYS_M_WAIT_H
-
-/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
-   */
-#undef HAVE_SYS_NDIR_H
-
-/* Define to 1 if you have the <sys/select.h> header file. */
-#undef HAVE_SYS_SELECT_H
-
-/* Define to 1 if you have the <sys/socket.h> header file. */
-#undef HAVE_SYS_SOCKET_H
-
-/* Define to 1 if you have the <sys/sockio.h> header file. */
-#undef HAVE_SYS_SOCKIO_H
-
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
-
-/* Define to 1 if you have the <sys/stropts.h> header file. */
-#undef HAVE_SYS_STROPTS_H
-
-/* Define to 1 if you have the <sys/termios.h> header file. */
-#undef HAVE_SYS_TERMIOS_H
-
-/* Define to 1 if you have the <sys/time.h> header file. */
-#undef HAVE_SYS_TIME_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
-/* Define to 1 if you have the <sys/ucred.h> header file. */
-#undef HAVE_SYS_UCRED_H
-
-/* Define to 1 if you have the <sys/wait.h> header file. */
-#undef HAVE_SYS_WAIT_H
-
-/* Define if sys/stat.h declares S_ISSOCK. */
-#undef HAVE_S_ISSOCK
-
-/* C++ compiler supports template repository */
-#undef HAVE_TEMPLATE_REPOSITORY
-
-/* Define to 1 if you have the <termios.h> header file. */
-#undef HAVE_TERMIOS_H
-
-/* Define to 1 if you have the <termio.h> header file. */
-#undef HAVE_TERMIO_H
-
-/* Define to 1 if you have the <time.h> header file. */
-#undef HAVE_TIME_H
-
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
 
-/* Define to 1 if you have the `unlockpt' function. */
-#undef HAVE_UNLOCKPT
-
-/* Define if you have unsetenv */
-#undef HAVE_UNSETENV
-
-/* Define if you have the unsetenv prototype */
-#undef HAVE_UNSETENV_PROTO
-
-/* Define if you have usleep */
-#undef HAVE_USLEEP
-
-/* Define if you have the usleep prototype */
-#undef HAVE_USLEEP_PROTO
-
-/* Define if you have the utempter helper for utmp managment */
-#undef HAVE_UTEMPTER
-
-/* Define to 1 if you have the <util.h> header file. */
-#undef HAVE_UTIL_H
-
-/* Define to 1 if you have the <vfork.h> header file. */
-#undef HAVE_VFORK_H
-
 /* Define to 1 if you have the `vsnprintf' function. */
 #undef HAVE_VSNPRINTF
-
-/* Define to 1 if you have the `vsyslog' function. */
-#undef HAVE_VSYSLOG
-
-/* Define to 1 if you have the `waitpid' function. */
-#undef HAVE_WAITPID
-
-/* Define if you want Xinerama support */
-#undef HAVE_XINERAMA
-
-/* Define if you have the XKB extension */
-#undef HAVE_XKB
-
-/* Define if you have XkbSetPerClientControls */
-#undef HAVE_XKBSETPERCLIENTCONTROLS
-
-/* Define if you have the XTest extension */
-#undef HAVE_XTEST
-
-/* The PAM service to be used by kcheckpass */
-#undef KCHECKPASS_PAM_SERVICE
 
 /* Suffix for lib directories */
 #undef KDELIBSUFF
 
 /* Define a safe value for MAXPATHLEN */
 #undef KDEMAXPATHLEN
-
-/* The PAM service to be used by kdm */
-#undef KDM_PAM_SERVICE
-
-/* The PAM service to be used by kscreensaver */
-#undef KSCREENSAVER_PAM_SERVICE
 
 /* Name of package */
 #undef PACKAGE
@@ -389,15 +101,6 @@
 
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
-
-/* Define if your PAM support takes non-const arguments (Solaris) */
-#undef PAM_MESSAGE_NONCONST
-
-/* Define where your java executable is */
-#undef PATH_JAVA
-
-/* The size of a `char', as computed by sizeof. */
-#undef SIZEOF_CHAR
 
 /* The size of a `char *', as computed by sizeof. */
 #undef SIZEOF_CHAR_P
@@ -419,15 +122,6 @@
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
-
-/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
-#undef TIME_WITH_SYS_TIME
-
-/* Define the file for utmp entries */
-#undef UTMP
-
-/* Define if you want to use utmp entries */
-#undef UTMP_SUPPORT
 
 /* Version number of package */
 #undef VERSION
@@ -458,99 +152,34 @@
 
 
 
-#if !defined(HAVE_GETDOMAINNAME_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-int getdomainname (char *, unsigned int);
-#endif
-
-
-
-#if !defined(HAVE_GETHOSTNAME_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-int gethostname (char *, unsigned int);
-#endif
-
-
-
-#if !defined(HAVE_MKSTEMP_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-int mkstemp(char *);
-#endif
-
-
-
-#if !defined(HAVE_RANDOM_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-long int random(void);
-#endif
-
-
-
-#if !defined(HAVE_SETENV_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-int setenv (const char *, const char *, int);
-#endif
-
-
-
-#if !defined(HAVE_SRANDOM_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-void srandom(unsigned int);
+#if defined(HAVE_NSGETENVIRON) && defined(HAVE_CRT_EXTERNS_H)
+# include <sys/time.h>
+# include <crt_externs.h>
+# define environ (*_NSGetEnviron())
 #endif
 
 
 
 #if !defined(HAVE_STRLCAT_PROTO)
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 unsigned long strlcat(char*, const char*, unsigned long);
+#ifdef __cplusplus
+}
+#endif
 #endif
 
 
 
 #if !defined(HAVE_STRLCPY_PROTO)
 #ifdef __cplusplus
-extern "C"
+extern "C" {
 #endif
 unsigned long strlcpy(char*, const char*, unsigned long);
-#endif
-
-
-
-#if !defined(HAVE_UNSETENV_PROTO)
 #ifdef __cplusplus
-extern "C"
+}
 #endif
-void unsetenv (const char *);
-#endif
-
-
-
-#if !defined(HAVE_USLEEP_PROTO)
-#ifdef __cplusplus
-extern "C"
-#endif
-int usleep (unsigned int);
-#endif
-
-
-
-#ifndef HAVE_S_ISSOCK
-#define HAVE_S_ISSOCK
-#define S_ISSOCK(mode) (1==0)
 #endif
 
 
@@ -583,24 +212,8 @@ int snprintf(char *str, size_t n, char const *fmt, ...);
 #endif
 
 
-
-#if !defined(HAVE_SETEUID)
-#define seteuid(_eu) setresuid(-1, _eu, -1)
-#endif
-
-#if defined(__osf__)
-#define AVOID_XKB                 /* for konsole to avoid XKB and XTEST */
-#endif
-
-
-/* Define to `int' if <sys/types.h> doesn't define. */
-#undef gid_t
-
 /* Compatibility define */
 #undef ksize_t
 
 /* Define the real type of socklen_t */
 #undef socklen_t
-
-/* Define to `int' if <sys/types.h> doesn't define. */
-#undef uid_t

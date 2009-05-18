@@ -8,7 +8,7 @@ prefix=`kde-config --prefix`
 
 for lib in libkabc libkdecore libkdeprint libkdeui libkio libkhtml libkio libkparts libkspell
 do
-	echo -n "checking for $lib... "
+	echo -n "checking for $lib "
 	libFile="$prefix/lib/$lib.la"
 	
 	if test -f $libFile

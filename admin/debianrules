@@ -40,12 +40,17 @@ $ARTSCCONFIG		=	"$kde_bindir/artsc-config";
 
 if (defined $ENV{DEB_BUILD_OPTIONS} &&
     $ENV{DEB_BUILD_OPTIONS} =~ /\bdebug\b/) {
-  $enable_debug="--enable-debug";
+  $enable_debug="--enable-debug=full";
   $enable_final="";
 }
 else {
   $enable_debug="--disable-debug";
-  $enable_final="--enable-final";
+  if (defined $ENV{DEB_BUILD_OPTIONS} &&
+              $ENV{DEB_BUILD_OPTIONS} =~ /\bfinal\b/) {
+	  $enable_final="--enable-final";
+  } else {
+	  $enable_final="";
+  }
 }
 
 if (@ARGV && $ARGV[0] eq 'echodirs') {
