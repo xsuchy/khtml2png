@@ -1,3 +1,6 @@
+h:2008-04-18 2.7.5 improved size detection of huge screenshots
+This release was improved by Florent Bruneau
+cha: Fixed problems with screenshots of very big webpages that showed gray bars
 h:2007-12-03 New options in new version 2.7.0
 This release was improved by Florent Bruneau and Floren Munteanu.
 new: Options to allow the user to scale the size of the output image independently to the size of the screenshot.

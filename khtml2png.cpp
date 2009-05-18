@@ -1,8 +1,8 @@
 /*  Render HTML page, write out as PNG
     Heavily based on KDE HTML thumbnail creator
     Copyright (C) 2003 Simon MacMullen
-    Copyright (C) 2004-2007 Hauke Goos-Habermann
-    Copyright (C) 2007 Florent Bruneau
+    Copyright (C) 2004-2008 Hauke Goos-Habermann
+    Copyright (C) 2007-2008 Florent Bruneau
     Copyright (C) 2007 Alex Osborne
 
     This program is free software; you can redistribute it and/or
@@ -197,9 +197,10 @@ void KHTML2PNG::resizeClipper(const int width, const int height)
 {
 	const int x = width + m_html->view()->width() - m_html->view()->clipper()->width();
 	const int y = height + m_html->view()->height() - m_html->view()->clipper()->height();
+	m_html->view()->viewport()->resize(width, height);
 	m_html->view()->resize(x, y);
+	m_html->view()->clipper()->resize(width, height);
 }
-
 
 
 
@@ -222,7 +223,11 @@ void KHTML2PNG::completed()
 			if (rect.isEmpty()) {
 				rect = QRect(0, 0, rect.right(), rect.bottom());
 			}
-			resizeClipper(rect.right() + 200, rect.bottom() + 200);
+			int right  = m_html->view()->clipper()->rect().width();
+			int bottom = m_html->view()->clipper()->rect().bottom();
+			right = right > rect.right() ? right : rect.right() + 200;
+			bottom = bottom > rect.bottom() ? bottom : rect.bottom() + 200;
+			resizeClipper(right, bottom);
 			rect = m_html->htmlDocument().all().namedItem(autoDetectId).getRect();
 			if (rect.isEmpty()) {
 				rect = QRect(0, 0, rect.right(), rect.bottom());
@@ -437,14 +442,14 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.7.0",
+	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.7.5",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
 			Example:\n\
 			khtml2png2 --width 800 --height 600 http://www.kde.org/ kde-org.png\n\
 			or\n\
 			khtml2png --auto ID_border http://www.kde.org/ kde-org.png"),
 		KAboutData::License_GPL,
-			"(c) 2003 Simon MacMullen, 2004-2007 Hauke Goos-Habermann, 2007 Florent Bruneau, 2007 Alex Osborne");
+			"(c) 2003 Simon MacMullen, 2004-2008 Hauke Goos-Habermann, 2007-2008 Florent Bruneau, 2007 Alex Osborne");
 	aboutData.addAuthor("Simon MacMullen", 0, "s.macmullen@ry.com");
 	aboutData.addAuthor("Hauke Goos-Habermann", 0, "hhabermann@pc-kiel.de","http://khtml2png.sourceforge.net");
 	aboutData.addAuthor("Florent Bruneau", 0, "florent.bruneau@m4x.org", "http://fruneau.rznc.net");

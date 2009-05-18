@@ -1,8 +1,11 @@
 #!/bin/sh
 
+mkdir debian
+
 #enter package directory
 cd debian
 
+cp -r ../DEBIAN .
 cd DEBIAN
 if test -f control
 then
@@ -16,6 +19,8 @@ else
 	exit 1
 fi
 cd ..
+
+pwd
 
 mkdir -p usr/bin
 cp ../khtml2png2 usr/bin
