@@ -1,4 +1,23 @@
-
+h:2007-07-19 Added FAQ
+Added a page with frequently asked questions.
+h:2007-06-27 New version 2.6.7
+This release was improved by Alex Osborne
+cha: Decreased CPU load.
+cha: Added timeout option for loading pages.
+h:2007-06-04 New version 2.6.5
+This release was improved by Florent Bruneau.
+fix: Now produces screenshots on my Debian Etch system under KDE 3.5.5 without glitches.
+fix: Maybe better working on other systems too. Please test.
+h:2007-03-13 New version 2.6.0
+This release was highly improved by Florent Bruneau.
+cha: Remove dependence on ImageMagick and use Qt to do exactly the same thing (Florent)
+fix: Fix buffer overflow vulnerabilities (Florent)
+fix: Fix a code injection vulnerability (Florent)
+cha: Auto-kill QMessageBox (so the program no more needs user interactions in the X session)
+cha: Removed as much as possible of duplicated code. (Florent)
+fix: Fix some issues I met on very large screenshots. (Florent)
+cha: Concluding code aligning, function descriptions, programm information. (Hauke)
+h:2006-07-03 New version 2.5.0
 cha: Now waits until the page loading is finished before the screenshot is made.
 cha: Now with checking for the size of the HTML page to avoid making screenshots bigger than the HTML page.
 cha: "flash-delay" isn't needed any more.
@@ -13,6 +32,8 @@ cha: Setting the khtml2png window to borderless isn't needed any more.
 new: makeTarRelease.sh: Makes a tar.gz file that contains the source of khtml2png
 new: uploadTar.sh: Uploads the tar to SF
 h:2005-11-17 Fix in the khtml2png 2.0.1 package
-There was a problem with the configure script. Inside from KDevelop 3.3 configuration and compiling worked well but not from plain command line. Now there is a new khtml2png 2.0.1 package with a fixed configure script that checks for missing dependencies.
+There was a problem with the configure script. Inside from KDevelop 3.3 configuration and compiling worked well but 
+not from plain command line. Now there is a new khtml2png 2.0.1 package with a fixed configure script that checks for 
+missing dependencies.
 h:2005-11-15 Initial site and source files for khtml2png 2.x uploaded
 Today starts the new web site for khtml2png.
