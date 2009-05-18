@@ -43,12 +43,6 @@
 
 #include "khtml2png.h"
 
-void myKHTMLPart::showError( KIO::Job* job ) {
-   if (job->error() == KIO::ERR_NO_CONTENT)
-     return;
-   htmlError( job->error(), job->errorText(), "" );
-}
-
 KHTML2PNG::KHTML2PNG(int jscript, int java, int plugin, int refresh, int localonly)
     : m_html(0) {
 	m_html = new myKHTMLPart;

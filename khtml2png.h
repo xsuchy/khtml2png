@@ -22,7 +22,7 @@
 #define _KHTML2PNG_H_
 
 class myKHTMLPart : public KHTMLPart {
-	virtual void showError( KIO::Job* job );
+//	virtual void showError( KIO::Job* job );
 //	friend class KHTML2PNG;
 };
 
