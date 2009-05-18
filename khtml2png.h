@@ -2,6 +2,7 @@
  *  Heavily based on KDE HTML thumbnail creator
  *  Copyright (C) 2003 Simon MacMullen
  *  Copyright (C) 2004-2006 Hauke Goos-Habermann
+ *  Copyright (C) 2007 Florent Bruneau
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
@@ -22,33 +23,45 @@
 #ifndef _KHTML2PNG_H_
 #define _KHTML2PNG_H_
 
+#include <kapplication.h>
+
 class KHTMLPart;
 
-class KHTML2PNG : public QObject
+class KHTML2PNG : public KApplication
 {
-	Q_OBJECT
+    Q_OBJECT
+    
+    KHTMLPart *m_html;
+    bool m_completed;
+    bool browser;
+    bool loadingCompleted; //indicates if the page is loaded completely
+    bool detectionCompleted;
 
-public:
-	QImage* create(const QString &path/*, int flashDelay*/);
-	void showMiniBrowser(const QString &path);
+    QString autoDetectId;
+    QRect   rect;
+    QPixmap *pix;
 
-public slots:
-	void openURLRequest(const KURL &url, const KParts::URLArgs & );
-	void completed();
+    int xVisible;
+    int yVisible;
 
-protected:
-	virtual void timerEvent(QTimerEvent *);
-	void create_m_html();
-	QPixmap grabChildWidgets( QWidget * w );
+    public:
+        KHTML2PNG(const QString& path, const QString& id, int m_width, int m_height);
+        ~KHTML2PNG();
+        bool save(const QString& file) const;
 
-private slots:
-	void slotCompleted();
+    protected:
+        virtual bool eventFilter(QObject *o, QEvent *e);
 
-private:
-	bool m_flashStarted;
-	bool m_completed;
-	bool browser;
-	bool loadingCompleted; //indicates is the page is loaded completely
+    private:
+        void init(const QString& path);
+        QPixmap *grabChildWidgets(QWidget *w) const;
+        void doRendering();
+
+    private slots:
+        void openURLRequest(const KURL &url, const KParts::URLArgs & );
+        void completed();
 };
 
 #endif
+
+// vim:set et sw=4 sts=4 sws=4:
