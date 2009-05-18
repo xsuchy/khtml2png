@@ -26,6 +26,7 @@
 #include <kapplication.h>
 
 class KHTMLPart;
+class KCmdLineArgs;
 
 class KHTML2PNG : public KApplication
 {
@@ -36,8 +37,10 @@ class KHTML2PNG : public KApplication
     bool browser;
     bool loadingCompleted; //indicates if the page is loaded completely
     bool detectionCompleted;
-
+    bool killPopup;
+    
     QString autoDetectId;
+    QString filename;
     QRect   rect;
     QPixmap *pix;
 
@@ -45,17 +48,21 @@ class KHTML2PNG : public KApplication
     int yVisible;
 
     public:
-        KHTML2PNG(const QString& path, const QString& id, int m_width, int m_height);
+        KHTML2PNG(const KCmdLineArgs* const args);
         ~KHTML2PNG();
-        bool save(const QString& file) const;
+        bool save() const;
 
     protected:
         virtual bool eventFilter(QObject *o, QEvent *e);
 
     private:
-        void init(const QString& path);
+        void init(const QString& path, const bool js = true, 
+                                       const bool java = true,
+                                       const bool plugins = true,
+                                       const bool redirect = true);
         QPixmap *grabChildWidgets(QWidget *w) const;
         void doRendering();
+        void resizeClipper(const int width, const int height);
 
     private slots:
         void openURLRequest(const KURL &url, const KParts::URLArgs & );

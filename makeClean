@@ -1,1 +1,1 @@
-rm -r CMakeFiles CMakeCache.txt cmake_install.cmake Doxyfile
+rm -r CMakeFiles CMakeCache.txt cmake_install.cmake Doxyfile *.moc khtml2png2

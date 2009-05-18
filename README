@@ -48,3 +48,24 @@ If you like you can rename the executable.
 
 Running
 =======
+
+khtml2png2 [options] url outfile
+
+Options:
+  -w, --width <width>       Width of canvas on which to render html [800]
+  -h, --height <height>     Height of canvas on which to render html [1000]
+  -t, --time <time>         Maximum time in seconds to spend loading page [30]
+  --auto <id>               Use this option if you to autodetect the bottom/right border []
+  --disable-js              Enable/Disable javascript (enabled by default)
+  --disable-java            Enable/Disable java (enabled by default)
+  --disable-plugins         Enable/Disable KHTML plugins (like Flash player, enabled by default)
+  --disable-redirect        Enable/Disable auto-redirect by header <meta > (enabled by default)
+  --disable-popupkiller     Enable/Disable popup auto-kill (enabled by default)
+
+Example:
+
+	khtml2png2 --width 800 --height 1000 http://www.kde.org/ kde-org.png
+
+or
+
+	khtml2png --auto ID_border http://www.kde.org/ kde-org.png
