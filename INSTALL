@@ -1,27 +1,3 @@
-KDE settings
-============
-
-The window of khtml2png has to be borderless. To enable the boderless behaviour you have to edit ~/.kde/share/config/kwinrulesrc and add / edit the following lines. If you want to edit the file by hand you can use the KDE dialog found in the menu of the window (top left down arrow => "advanced" => "Special window behaviour".
-
-[<free number e.g. 1>]
-clientmachine=doesntMatter
-clientmachinematch=0
-description=khtml2png
-noborder=true
-noborderrule=2
-title=khtml2png
-titlematch=1
-types=1
-windowrole=unnamed
-windowrolematch=1
-wmclass=Khtml2png
-wmclasscomplete=false
-wmclassmatch=1
-
-[General]
-count=<last used number e.g. 1>
-
-
 Basic Installation
 ==================
 

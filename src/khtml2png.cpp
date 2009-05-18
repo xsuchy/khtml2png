@@ -1,6 +1,7 @@
 /*  Render HTML page, write out as PNG
 	Heavily based on KDE HTML thumbnail creator
 	Copyright (C) 2003 Simon MacMullen
+	Copyright (C) 2004-2005 Hauke Goos-Habermann
 
 	This program is free software; you can redistribute it and/or
 	modify it under the terms of the GNU General Public
@@ -174,6 +175,8 @@ void KHTML2PNG::showMiniBrowser(const QString &path)
 **/
 QImage* KHTML2PNG::create(const QString &path, int flashDelay)
 {
+	int visibleX,visibleY;
+
 	if (!m_html)
 	{
 		/*
@@ -191,8 +194,20 @@ QImage* KHTML2PNG::create(const QString &path, int flashDelay)
 	m_html->view()->setMarginWidth(0);
 	m_html->view()->setMarginHeight(0);
 
-	//resize it to the wanted size
+	//resize the window to the wanted size
 	m_html->view()->resize(xCapture, yCapture);
+
+	//check what visible size we've got
+	visibleX=m_html->view()->clipper()->rect().width();
+	visibleY=m_html->view()->clipper()->rect().height();
+
+	//calculate the difference and adjust the capture size
+	yCapture+=yCapture-visibleY;
+	xCapture+=xCapture-visibleX;
+
+	//set the new capture size (we get hopefully the correct size *cross your fingers*)
+	m_html->view()->resize(xCapture, yCapture);
+
 	kapp->processOneEvent();
 	
 
@@ -272,7 +287,7 @@ static KCmdLineOptions options[] =
 int main(int argc, char **argv)
 {
 	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"),
-		"2.0.1",
+		"2.0.2",
 		I18N_NOOP("Render HTML to a PNG from the command line\n\
 Example: khtml2png --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
 or\n\
@@ -286,6 +301,11 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 	KCmdLineArgs::addCmdLineOptions(options);
 	KCmdLineArgs *args=KCmdLineArgs::parsedArgs();
 
+	if (args->count() < 2)
+		{
+			args->usage();
+			exit(1);
+		};
 	QString temp;
 	
 	//check for auto detection parameter
@@ -360,11 +380,12 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 
 			xNr = 0;
 
-			yCapture = yRemain + 10;
 
 			while (!lastXShot)
 				{
-					xCapture = xRemain + 18;
+					//set capture size in the inner loop because xCapture and yCapture are overwritten by convertor->create
+					yCapture = yRemain;
+					xCapture = xRemain;
 
 					//capture the part of the screen
 					QImage* renderedImage = convertor->create(path, flashDelay);
@@ -396,7 +417,7 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 		};
 
 	delete(m_html);
-
+	delete(convertor);
 	
 
 	//combines the screenshot parts to rows (make a picture of all images in the same row)
@@ -429,8 +450,7 @@ CAUTION: needs \"convert\" from the imagemagick tools to work properly!"),
 	sprintf(cmd,"%s -append %s",cmd,args->arg(1));
 
 	system(cmd);
-
-	delete convertor;
+	exit(0);
 }
 
 #include "khtml2png.moc"

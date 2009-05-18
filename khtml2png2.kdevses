@@ -1,0 +1,51 @@
+<?xml version = '1.0' encoding = 'UTF-8'?>
+<!DOCTYPE KDevPrjSession>
+<KDevPrjSession>
+ <DocsAndViews NumberOfDocuments="4" >
+  <Doc0 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp" >
+   <View0 line="402" Type="Source" />
+  </Doc0>
+  <Doc1 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.h" >
+   <View0 line="35" Type="Source" />
+  </Doc1>
+  <Doc2 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/INSTALL" >
+   <View0 line="29" Type="Source" />
+  </Doc2>
+  <Doc3 NumberOfViews="1" URL="file:///mnt/crypto/mdk/m23helper/khtml2png2/ChangeLog" >
+   <View0 line="0" Type="Source" />
+  </Doc3>
+ </DocsAndViews>
+ <pluginList>
+  <kdevdebugger>
+   <breakpointList>
+    <breakpoint0 location="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp:395" type="1" condition="" enabled="1" />
+   </breakpointList>
+  </kdevdebugger>
+  <kdevbookmarks>
+   <bookmarks>
+    <bookmark url="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp" >
+     <mark line="357" />
+     <mark line="156" />
+     <mark line="89" />
+     <mark line="179" />
+    </bookmark>
+   </bookmarks>
+  </kdevbookmarks>
+  <kdevrbdebugger>
+   <breakpointList>
+    <breakpoint0 location="/mnt/crypto/mdk/m23helper/khtml2png2/src/khtml2png.cpp:395" type="1" enabled="1" />
+   </breakpointList>
+   <watchExpressions>
+    <el>kapp</el>
+    <el>muh</el>
+    <el>nodeList</el>
+   </watchExpressions>
+  </kdevrbdebugger>
+  <kdevvalgrind>
+   <executable path="" params="" />
+   <valgrind path="valgrind" params=" --leak-check=yes" />
+   <calltree path="" params="" />
+   <kcachegrind path="" />
+  </kdevvalgrind>
+ </pluginList>
+</KDevPrjSession>

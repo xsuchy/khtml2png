@@ -1,0 +1,55 @@
+autoscan: warning: missing AC_CHECK_FUNCS([memset]) wanted by: 
+	src/khtml2png.cpp:405
+	src/khtml2png.cpp:421
+autoscan: warning: missing AC_CHECK_HEADERS([sys/time.h]) wanted by: 
+	config.h.in:156
+autoscan: warning: missing AC_C_CONST wanted by: 
+	config.h.in:167
+	config.h.in:179
+	config.h.in:201
+	config.h.in:205
+	src/khtml2png.cpp:103
+	src/khtml2png.cpp:103
+	src/khtml2png.cpp:131
+	src/khtml2png.cpp:131
+	src/khtml2png.cpp:132
+	src/khtml2png.cpp:132
+	src/khtml2png.cpp:148
+	src/khtml2png.cpp:175
+	src/khtml2png.h:31
+	src/khtml2png.h:32
+	src/khtml2png.h:35
+	src/khtml2png.h:35
+autoscan: warning: missing AC_HEADER_STDBOOL wanted by: 
+	src/khtml2png.cpp:40
+	src/khtml2png.cpp:55
+	src/khtml2png.cpp:58
+	src/khtml2png.h:45
+	src/khtml2png.h:46
+	src/khtml2png.h:47
+	src/khtml2png.cpp:40
+	src/khtml2png.cpp:41
+	src/khtml2png.cpp:58
+	src/khtml2png.cpp:126
+	src/khtml2png.cpp:199
+	src/khtml2png.cpp:213
+	src/khtml2png.cpp:299
+	src/khtml2png.cpp:358
+	src/khtml2png.cpp:54
+	src/khtml2png.cpp:71
+	src/khtml2png.cpp:83
+	src/khtml2png.cpp:122
+	src/khtml2png.cpp:123
+	src/khtml2png.cpp:124
+	src/khtml2png.cpp:125
+	src/khtml2png.cpp:241
+	src/khtml2png.cpp:243
+	src/khtml2png.cpp:295
+	src/khtml2png.cpp:324
+	src/khtml2png.cpp:385
+	src/khtml2png.cpp:394
+autoscan: warning: missing AC_PROG_RANLIB wanted by: 
+	admin/ltmain.sh:6288
+autoscan: warning: missing AC_TYPE_SIZE_T wanted by: 
+	config.h.in:201
+	config.h.in:205

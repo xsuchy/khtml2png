@@ -1,0 +1,7 @@
+h:2005-11-18 New version 2.0.2
+fix: Now scrolling in X and Y direction should work without duplicating parts of the image.
+cha: Setting the khtml2png window to borderless isn't needed any more.
+h:2005-11-17 Fix in the khtml2png 2.0.1 package
+There was a problem with the configure script. Inside from KDevelop 3.3 configuration and compiling worked well but not from plain command line. Now there is a new khtml2png 2.0.1 package with a fixed configure script that checks for missing dependencies.
+h:2005-11-15 Initial site and source files for khtml2png 2.x uploaded
+Today starts the new web site for khtml2png.

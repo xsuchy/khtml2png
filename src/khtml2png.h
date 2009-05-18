@@ -1,6 +1,7 @@
 /*  Render HTML page, write out as PNG
  *  Heavily based on KDE HTML thumbnail creator
  *  Copyright (C) 2003 Simon MacMullen
+ *  Copyright (C) 2004-2005 Hauke Goos-Habermann
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public
