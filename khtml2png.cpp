@@ -24,6 +24,7 @@
 #include <qimage.h>
 #include <qpainter.h>
 #include <qobjectlist.h>
+#include <qtimer.h>
 
 #include <khtml_part.h>
 #include <khtmlview.h>
@@ -54,6 +55,7 @@ KHTML2PNG::KHTML2PNG(const KCmdLineArgs* const args)
 	const QString width  = args->getOption("width");
 	const QString height = args->getOption("height");
 	autoDetectId = args->getOption("auto");
+	timeoutMillis = args->getOption("time").toUInt() * 1000;
 
 	rect = QRect(0, 0, width.isEmpty() ? -1 : width.toInt(), height.isEmpty() ? -1 : height.toInt());
 
@@ -288,11 +290,12 @@ void KHTML2PNG::init(const QString& path, const bool js, const bool java, const 
 	xVisible = m_html->view()->clipper()->width() - 20;
 	yVisible = m_html->view()->clipper()->height() - 20;
 
+	// set a maximum time before we just snapshot whatever we've got loaded so far
+	QTimer *timer = new QTimer(this);
+	connect(timer, SIGNAL(timeout()), this, SLOT(completed()));
+	timer->start(timeoutMillis, false);
+
 	m_html->openURL(path);
-	while (!loadingCompleted)
-	{
-		processEvents(20);
-	}
 }
 
 
@@ -404,17 +407,18 @@ static KCmdLineOptions options[] =
 
 int main(int argc, char **argv)
 {
-	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.6.5",
+	KAboutData aboutData("khtml2png", I18N_NOOP("KHTML2PNG"), "2.6.7",
 			     I18N_NOOP("Render HTML to a PNG from the command line\n\
 				       Example:\n\
 				       khtml2png2 --width 800 --height 1000 http://www.kde.org/ kde-org.png\n\
 				       or\n\
 				       khtml2png --auto ID_border http://www.kde.org/ kde-org.png"),
 			     KAboutData::License_GPL,
-			     "(c) 2003 Simon MacMullen & Hauke Goos-Habermann 2004-2007 & Florent Bruneau 2007");
+			     "(c) 2003 Simon MacMullen, 2004-2007 Hauke Goos-Habermann, 2007 Florent Bruneau, 2007 Alex Osborne");
 	aboutData.addAuthor("Simon MacMullen", 0, "s.macmullen@ry.com");
 	aboutData.addAuthor("Hauke Goos-Habermann", 0, "hhabermann@pc-kiel.de","http://khtml2png.sourceforge.net");
 	aboutData.addAuthor("Florent Bruneau", 0, "florent.bruneau@m4x.org", "http://fruneau.rznc.net");
+	aboutData.addAuthor("Alex Osborne", 0, "alex@mugofgrog.com", "http://www.mugofgrog.com");
 	KCmdLineArgs::init(argc, argv, &aboutData);
 	KCmdLineArgs::addCmdLineOptions(options);
 	KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
@@ -426,7 +430,8 @@ int main(int argc, char **argv)
 	}
 
 	KInstance inst(&aboutData);
-	KHTML2PNG app(args); // never returns
+	KHTML2PNG app(args);
+	app.exec(); 
 }
 
 #include "khtml2png.moc"

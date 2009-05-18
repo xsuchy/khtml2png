@@ -47,6 +47,8 @@ class KHTML2PNG : public KApplication
     int xVisible;
     int yVisible;
 
+    uint timeoutMillis; // maximum milliseconds to wait for page to load
+
     public:
         KHTML2PNG(const KCmdLineArgs* const args);
         ~KHTML2PNG();
